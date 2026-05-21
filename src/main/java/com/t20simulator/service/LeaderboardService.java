@@ -8,12 +8,14 @@ import java.util.List;
 
 /**
  * Produces the ranked leaderboard for the points table tab.
+ * DAO sorts by points/NRR/name, then this service assigns visible rank numbers.
  */
 public class LeaderboardService {
     private final PointsTableDAO pointsTableDAO = new PointsTableDAO();
 
     public List<PointsTable> getLeaderboard() throws SQLException {
         List<PointsTable> leaderboard = pointsTableDAO.getLeaderboard();
+        // Rank starts from 1 for display in JTable.
         for (int index = 0; index < leaderboard.size(); index++) {
             leaderboard.get(index).setRank(index + 1);
         }

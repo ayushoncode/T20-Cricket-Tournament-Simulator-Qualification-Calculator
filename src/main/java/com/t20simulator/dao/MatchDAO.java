@@ -14,9 +14,11 @@ import java.util.List;
 
 /**
  * Performs CRUD-style database operations for match records.
+ * This class talks only to MATCH_TABLE and returns Match-related data.
  */
 public class MatchDAO {
     public int insert(Match match) throws SQLException {
+        // RETURN_GENERATED_KEYS is needed because the auto-increment match_id is used for INNINGS rows.
         String sql = "INSERT INTO MATCH_TABLE (team1_id, team2_id, venue_id, winner_team_id, match_date, match_type, status) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = DBConnection.getInstance().getConnection();
@@ -24,6 +26,7 @@ public class MatchDAO {
             preparedStatement.setInt(1, match.getTeam1Id());
             preparedStatement.setInt(2, match.getTeam2Id());
             preparedStatement.setInt(3, match.getVenueId());
+            // winner_team_id is NULL when match result is a tie.
             if (match.getWinnerTeamId() == null) {
                 preparedStatement.setNull(4, java.sql.Types.INTEGER);
             } else {
@@ -33,6 +36,7 @@ public class MatchDAO {
             preparedStatement.setString(6, match.getMatchType());
             preparedStatement.setString(7, match.getStatus());
             preparedStatement.executeUpdate();
+            // Read the generated primary key after INSERT.
             try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     return resultSet.getInt(1);
@@ -43,13 +47,15 @@ public class MatchDAO {
     }
 
     public List<Match> getAll() throws SQLException {
+        // Fetch all matches, latest first. Useful for future match history screens.
         String sql = "SELECT match_id, team1_id, team2_id, venue_id, winner_team_id, match_date, match_type, status "
                 + "FROM MATCH_TABLE ORDER BY match_date DESC, match_id DESC";
         List<Match> matches = new ArrayList<>();
         try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
+                // getObject checks NULL safely before converting winner_team_id to int.
                 Integer winnerTeamId = resultSet.getObject("winner_team_id") == null
                         ? null : resultSet.getInt("winner_team_id");
                 matches.add(new Match(
@@ -68,6 +74,7 @@ public class MatchDAO {
     }
 
     public void updateWinner(int matchId, Integer winnerTeamId, String status) throws SQLException {
+        // Updates final result and status after the match is saved.
         String sql = "UPDATE MATCH_TABLE SET winner_team_id = ?, status = ? WHERE match_id = ?";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -83,6 +90,7 @@ public class MatchDAO {
     }
 
     public int countMatchesByStatus(String status) throws SQLException {
+        // Dashboard uses this for completed and scheduled match counts.
         String sql = "SELECT COUNT(*) FROM MATCH_TABLE WHERE status = ?";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -95,6 +103,7 @@ public class MatchDAO {
     }
 
     public int countRemainingMatchesForTeam(int teamId) throws SQLException {
+        // Scenario predictor uses scheduled matches to estimate maximum reachable points.
         String sql = "SELECT COUNT(*) FROM MATCH_TABLE WHERE status = ? AND (team1_id = ? OR team2_id = ?)";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

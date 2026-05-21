@@ -1,15 +1,22 @@
 package com.t20simulator.model;
 
+/**
+ * Represents one team's calculated row in POINTS_TABLE.
+ * Also carries teamName and rank for JTable display.
+ */
 public class PointsTable {
+    // Database identity and team link.
     private int entryId;
     private int teamId;
     private String teamName;
+    // Tournament stats updated after every completed match.
     private int played;
     private int won;
     private int lost;
     private int tied;
     private double nrr;
     private int points;
+    // Display-only rank assigned by LeaderboardService.
     private int rank;
 
     public PointsTable() {

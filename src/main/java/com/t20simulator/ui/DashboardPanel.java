@@ -29,15 +29,19 @@ import java.sql.SQLException;
 
 /**
  * Dashboard tab that shows tournament totals and lets the user add teams and venues.
+ * It is the first screen the user sees after the application opens.
  */
 public class DashboardPanel extends JPanel {
+    // These labels are updated whenever refreshData() reads latest counts from the database.
     private final JLabel totalTeamsValue = new JLabel("0");
     private final JLabel matchesPlayedValue = new JLabel("0");
     private final JLabel matchesRemainingValue = new JLabel("0");
 
+    // Services hide database details from the UI layer.
     private final DashboardService dashboardService = new DashboardService();
     private final TeamService teamService = new TeamService();
     private final VenueService venueService = new VenueService();
+    // Callback supplied by MainFrame; used to refresh other panels after inserting data.
     private final Runnable onDataChanged;
 
     public DashboardPanel(Runnable onDataChanged) {
@@ -46,6 +50,7 @@ public class DashboardPanel extends JPanel {
         setLayout(new BorderLayout(22, 22));
         setBorder(BorderFactory.createEmptyBorder(26, 28, 28, 28));
 
+        // Top cards show live tournament summary values.
         JPanel statsPanel = UITheme.createPlainPanel();
         statsPanel.setLayout(new GridLayout(1, 3, 16, 16));
         statsPanel.add(createStatCard("Total Teams", totalTeamsValue));
@@ -64,6 +69,7 @@ public class DashboardPanel extends JPanel {
                 BorderFactory.createLineBorder(UITheme.BORDER, 1),
                 BorderFactory.createEmptyBorder(9, 18, 9, 18)));
 
+        // Button actions open input dialogs or reload stats from the database.
         addTeamButton.addActionListener(event -> openAddTeamDialog());
         addVenueButton.addActionListener(event -> openAddVenueDialog());
         refreshButton.addActionListener(event -> refreshData());
@@ -103,6 +109,7 @@ public class DashboardPanel extends JPanel {
 
     public void refreshData() {
         try {
+            // Service calculates totals using TEAM and MATCH_TABLE queries.
             DashboardStats stats = dashboardService.getStats();
             totalTeamsValue.setText(String.valueOf(stats.getTotalTeams()));
             matchesPlayedValue.setText(String.valueOf(stats.getMatchesPlayed()));
@@ -113,6 +120,7 @@ public class DashboardPanel extends JPanel {
     }
 
     private JPanel createStatCard(String title, JLabel valueLabel) {
+        // Reusable card builder for Total Teams, Matches Played, and Matches Remaining.
         JPanel panel = UITheme.createCardPanel();
         panel.setLayout(new BorderLayout());
         panel.setPreferredSize(new Dimension(250, 132));
@@ -127,6 +135,7 @@ public class DashboardPanel extends JPanel {
     }
 
     private void openAddTeamDialog() {
+        // Modal dialog blocks the main window until Save or close is pressed.
         JDialog dialog = new JDialog(JOptionPane.getFrameForComponent(this), "Add Team", true);
         dialog.setLayout(new BorderLayout(12, 12));
         dialog.setSize(420, 300);
@@ -158,10 +167,12 @@ public class DashboardPanel extends JPanel {
         UITheme.styleButton(saveButton, UITheme.HIGHLIGHT, UITheme.HIGHLIGHT_HOVER, UITheme.TEXT_PRIMARY);
         saveButton.addActionListener(event -> {
             try {
+                // Read form fields, build a Team model object, then pass it to the service layer.
                 Team team = new Team(0, nameField.getText().trim(), groupField.getText().trim(),
                         captainField.getText().trim(), cityField.getText().trim());
                 teamService.addTeam(team);
                 dialog.dispose();
+                // Refresh dashboard, dropdowns, and points table after a new team is inserted.
                 onDataChanged.run();
                 UITheme.showStyledMessage(this, "Success", "Team added successfully.", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException exception) {
@@ -179,6 +190,7 @@ public class DashboardPanel extends JPanel {
     }
 
     private void openAddVenueDialog() {
+        // Venue dialog collects stadium details used later while entering a match.
         JDialog dialog = new JDialog(JOptionPane.getFrameForComponent(this), "Add Venue", true);
         dialog.setLayout(new BorderLayout(12, 12));
         dialog.setSize(420, 260);
@@ -206,10 +218,12 @@ public class DashboardPanel extends JPanel {
         UITheme.styleButton(saveButton, UITheme.HIGHLIGHT, UITheme.HIGHLIGHT_HOVER, UITheme.TEXT_PRIMARY);
         saveButton.addActionListener(event -> {
             try {
+                // Capacity must be numeric because database column VENUE.capacity is INT.
                 Venue venue = new Venue(0, nameField.getText().trim(), cityField.getText().trim(),
                         Integer.parseInt(capacityField.getText().trim()));
                 venueService.addVenue(venue);
                 dialog.dispose();
+                // Refresh all screens so Match Entry venue dropdown immediately gets the new venue.
                 onDataChanged.run();
                 UITheme.showStyledMessage(this, "Success", "Venue added successfully.", JOptionPane.INFORMATION_MESSAGE);
             } catch (NumberFormatException exception) {

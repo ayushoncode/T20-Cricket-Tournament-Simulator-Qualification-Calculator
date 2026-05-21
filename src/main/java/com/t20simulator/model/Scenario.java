@@ -2,10 +2,15 @@ package com.t20simulator.model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents one qualification prediction saved in SCENARIO table.
+ */
 public class Scenario {
+    // Prediction identity and team being evaluated.
     private int scenarioId;
     private int teamId;
     private int targetRank;
+    // Suggested extra performance needed in future matches.
     private int requiredRuns;
     private int requiredBalls;
     private double projectedNrr;

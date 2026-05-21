@@ -1,10 +1,16 @@
 package com.t20simulator.model;
 
+/**
+ * Represents one row of the INNINGS table.
+ * One completed cricket match has two Innings objects.
+ */
 public class Innings {
+    // IDs link this innings to the match, batting team, and bowling team.
     private int inningsId;
     private int matchId;
     private int battingTeamId;
     private int bowlingTeamId;
+    // Scorecard values used later for NRR calculation.
     private int runsScored;
     private int wicketsLost;
     private double oversPlayed;

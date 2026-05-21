@@ -27,12 +27,15 @@ import java.util.List;
 
 /**
  * Match entry tab that inserts a match and both innings, then updates points and NRR.
+ * This screen is the main workflow for recording completed tournament matches.
  */
 public class MatchEntryPanel extends JPanel {
+    // Dropdowns are loaded from TEAM and VENUE tables.
     private final JComboBox<Team> team1ComboBox = new JComboBox<>();
     private final JComboBox<Team> team2ComboBox = new JComboBox<>();
     private final JComboBox<Venue> venueComboBox = new JComboBox<>();
     private final JComboBox<String> winnerComboBox = new JComboBox<>(new String[]{"Team 1", "Team 2", "Tie"});
+    // Text fields hold scorecard input for both innings.
     private final JTextField team1RunsField = new JTextField();
     private final JTextField team1WicketsField = new JTextField();
     private final JTextField team1OversField = new JTextField();
@@ -41,6 +44,7 @@ public class MatchEntryPanel extends JPanel {
     private final JTextField team2OversField = new JTextField();
     private final JLabel messageLabel = new JLabel("Enter a result and submit the match.");
 
+    // Services separate UI code from database and calculation code.
     private final TeamService teamService = new TeamService();
     private final VenueService venueService = new VenueService();
     private final MatchService matchService = new MatchService();
@@ -52,6 +56,7 @@ public class MatchEntryPanel extends JPanel {
         setLayout(new BorderLayout(22, 22));
         setBorder(BorderFactory.createEmptyBorder(26, 28, 28, 28));
 
+        // Apply common styling to all inputs before adding them to the form.
         styleInput(team1ComboBox);
         styleInput(team2ComboBox);
         styleInput(venueComboBox);
@@ -80,6 +85,7 @@ public class MatchEntryPanel extends JPanel {
         JPanel formCard = UITheme.createCardPanel();
         formCard.setLayout(new BoxLayout(formCard, BoxLayout.Y_AXIS));
 
+        // Top form section selects teams, venue, and winner.
         JPanel topFields = new JPanel(new GridLayout(4, 2, 14, 14));
         topFields.setOpaque(false);
         topFields.add(UITheme.createSecondaryLabel("Team 1", 13f));
@@ -117,6 +123,7 @@ public class MatchEntryPanel extends JPanel {
         team2Panel.add(UITheme.createSecondaryLabel("Overs", 13f));
         team2Panel.add(team2OversField);
 
+        // Two side-by-side innings sections collect runs, wickets, and overs.
         JPanel inningsPanel = new JPanel(new GridLayout(1, 2, 18, 0));
         inningsPanel.setOpaque(false);
 
@@ -140,6 +147,7 @@ public class MatchEntryPanel extends JPanel {
         JButton submitButton = new JButton("Submit Match");
         UITheme.styleButton(submitButton, UITheme.HIGHLIGHT, UITheme.HIGHLIGHT_HOVER, UITheme.TEXT_PRIMARY);
         submitButton.setPreferredSize(new Dimension(180, 44));
+        // Main action: validate form, save match, update points, and recalculate NRR.
         submitButton.addActionListener(event -> submitMatch());
 
         messageLabel.setFont(UITheme.BASE_FONT.deriveFont(Font.BOLD, 13f));
@@ -164,6 +172,7 @@ public class MatchEntryPanel extends JPanel {
 
     public void refreshData() {
         try {
+            // Reload dropdowns so newly added teams/venues appear without restarting the app.
             populateTeams(teamService.getAllTeams());
             populateVenues(venueService.getAllVenues());
         } catch (SQLException exception) {
@@ -173,6 +182,7 @@ public class MatchEntryPanel extends JPanel {
     }
 
     private void populateTeams(List<Team> teams) {
+        // Same team list is used in both dropdowns; validation later prevents same-team matches.
         team1ComboBox.removeAllItems();
         team2ComboBox.removeAllItems();
         for (Team team : teams) {
@@ -182,6 +192,7 @@ public class MatchEntryPanel extends JPanel {
     }
 
     private void populateVenues(List<Venue> venues) {
+        // Venue objects are displayed in the combo box using Venue.toString().
         venueComboBox.removeAllItems();
         for (Venue venue : venues) {
             venueComboBox.addItem(venue);
@@ -190,6 +201,7 @@ public class MatchEntryPanel extends JPanel {
 
     private void submitMatch() {
         try {
+            // Read selected objects from combo boxes.
             Team team1 = (Team) team1ComboBox.getSelectedItem();
             Team team2 = (Team) team2ComboBox.getSelectedItem();
             Venue venue = (Venue) venueComboBox.getSelectedItem();
@@ -197,7 +209,9 @@ public class MatchEntryPanel extends JPanel {
                 throw new SQLException("Please add teams and venues before entering a match.");
             }
 
+            // Convert UI winner choice into actual database team id; null means tie.
             Integer winnerTeamId = resolveWinner(team1, team2);
+            // MatchSubmission is a transfer object that carries all UI input to MatchService.
             MatchSubmission submission = new MatchSubmission(
                     team1.getTeamId(),
                     team2.getTeamId(),
@@ -213,6 +227,7 @@ public class MatchEntryPanel extends JPanel {
                     Double.parseDouble(team2OversField.getText().trim())
             );
 
+            // Service handles validation, INSERT queries, points update, and NRR recalculation.
             matchService.submitMatch(submission);
             messageLabel.setForeground(UITheme.SUCCESS);
             messageLabel.setText("Match saved successfully.");
@@ -228,6 +243,7 @@ public class MatchEntryPanel extends JPanel {
     }
 
     private Integer resolveWinner(Team team1, Team team2) {
+        // MATCH_TABLE.winner_team_id stores the winning team id. For a tie, it stores NULL.
         String winnerSelection = (String) winnerComboBox.getSelectedItem();
         if ("Team 1".equals(winnerSelection)) {
             return team1.getTeamId();
@@ -239,6 +255,7 @@ public class MatchEntryPanel extends JPanel {
     }
 
     private void clearForm() {
+        // Keep team and venue selected, but clear score fields for fast next entry.
         team1RunsField.setText("");
         team1WicketsField.setText("");
         team1OversField.setText("");

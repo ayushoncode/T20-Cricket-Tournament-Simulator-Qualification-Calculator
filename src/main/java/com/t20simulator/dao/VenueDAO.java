@@ -12,9 +12,11 @@ import java.util.List;
 
 /**
  * Provides CRUD-oriented access to venue data.
+ * All SQL related to the VENUE table is kept here.
  */
 public class VenueDAO {
     public void insert(Venue venue) throws SQLException {
+        // Insert a stadium/venue record entered from the Dashboard dialog.
         String sql = "INSERT INTO VENUE (name, city, capacity) VALUES (?, ?, ?)";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -26,11 +28,13 @@ public class VenueDAO {
     }
 
     public List<Venue> getAll() throws SQLException {
+        // Used by Match Entry screen to fill the venue dropdown.
         String sql = "SELECT venue_id, name, city, capacity FROM VENUE ORDER BY name";
         List<Venue> venues = new ArrayList<>();
         try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
+            // Convert every returned SQL row into a Venue object.
             while (resultSet.next()) {
                 venues.add(new Venue(
                         resultSet.getInt("venue_id"),

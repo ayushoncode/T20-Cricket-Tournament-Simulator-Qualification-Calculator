@@ -25,8 +25,10 @@ import java.awt.event.MouseEvent;
 
 /**
  * Shared dark-theme styling helpers for all Swing UI components.
+ * Keeping styles here prevents repeated color/font code in every panel.
  */
 public final class UITheme {
+    // Common color palette used by all screens.
     public static final Color BACKGROUND = new Color(0xF4F7F2);
     public static final Color SURFACE = new Color(0xFFFFFF);
     public static final Color CARD = new Color(0xFFFFFF);
@@ -43,9 +45,11 @@ public final class UITheme {
     public static final Font BASE_FONT = new Font("SansSerif", Font.PLAIN, 14);
 
     private UITheme() {
+        // Utility class: no object should be created.
     }
 
     public static void installLookAndFeelDefaults() {
+        // Configure default Swing component styles before panels are built.
         UIManager.put("Panel.background", BACKGROUND);
         UIManager.put("OptionPane.background", SURFACE);
         UIManager.put("OptionPane.messageForeground", TEXT_PRIMARY);
@@ -58,11 +62,13 @@ public final class UITheme {
     }
 
     public static void stylePanel(JPanel panel) {
+        // Base style for full-screen panels.
         panel.setBackground(BACKGROUND);
         panel.setOpaque(true);
     }
 
     public static RoundedPanel createCardPanel() {
+        // Card panel is used for grouped UI blocks like forms and stat cards.
         RoundedPanel panel = new RoundedPanel(CARD, 8, BORDER);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         return panel;
@@ -90,6 +96,7 @@ public final class UITheme {
     }
 
     public static void styleField(JComponent component) {
+        // Shared field style for JTextField and JComboBox inputs.
         component.setFont(BASE_FONT.deriveFont(13f));
         component.setForeground(TEXT_PRIMARY);
         component.setBackground(SURFACE);
@@ -104,6 +111,7 @@ public final class UITheme {
     }
 
     public static void styleButton(JButton button, Color baseColor, Color hoverColor, Color textColor) {
+        // Button receives normal color and hover color for better UI feedback.
         button.setBackground(baseColor);
         button.setForeground(textColor);
         button.setFont(BASE_FONT.deriveFont(Font.BOLD, 13f));
@@ -127,6 +135,7 @@ public final class UITheme {
     }
 
     public static void styleTabButton(JButton button, boolean active) {
+        // Navigation buttons look different when their tab is active.
         button.setFont(BASE_FONT.deriveFont(Font.BOLD, 14f));
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -151,6 +160,7 @@ public final class UITheme {
     }
 
     public static void showStyledMessage(Component parent, String title, String message, int messageType) {
+        // Wrapper around JOptionPane so all popups follow the same design.
         JLabel label = new JLabel("<html><body style='width:280px;'>" + message + "</body></html>");
         label.setForeground(TEXT_PRIMARY);
         label.setFont(BASE_FONT);
@@ -185,6 +195,7 @@ public final class UITheme {
 
         @Override
         protected void paintComponent(Graphics graphics) {
+            // Custom painting draws anti-aliased rounded background and border.
             Graphics2D graphics2D = (Graphics2D) graphics.create();
             graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             graphics2D.setColor(backgroundColor);

@@ -13,9 +13,11 @@ import java.util.List;
 
 /**
  * Stores and retrieves saved qualification predictions.
+ * Scenario rows are created whenever the user clicks Predict.
  */
 public class ScenarioDAO {
     public void insert(Scenario scenario) throws SQLException {
+        // Save prediction result so it can be reviewed later.
         String sql = "INSERT INTO SCENARIO (team_id, target_rank, required_runs, required_balls, projected_nrr, created_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection connection = DBConnection.getInstance().getConnection();
@@ -31,6 +33,7 @@ public class ScenarioDAO {
     }
 
     public List<Scenario> getByTeam(int teamId) throws SQLException {
+        // Fetch previous prediction results for one team, newest first.
         String sql = "SELECT scenario_id, team_id, target_rank, required_runs, required_balls, projected_nrr, created_at "
                 + "FROM SCENARIO WHERE team_id = ? ORDER BY created_at DESC";
         List<Scenario> scenarios = new ArrayList<>();

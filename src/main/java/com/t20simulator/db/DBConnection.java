@@ -9,8 +9,10 @@ import java.util.Properties;
 
 /**
  * Singleton JDBC connection factory that reads credentials from config.properties.
+ * All DAO classes call this class when they need to execute SQL.
  */
 public final class DBConnection {
+    // volatile keeps singleton creation safe when multiple threads access it.
     private static volatile DBConnection instance;
 
     private final String url;
@@ -19,6 +21,7 @@ public final class DBConnection {
 
     private DBConnection() {
         Properties properties = new Properties();
+        // config.properties is loaded from src/main/resources at runtime.
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
             if (inputStream == null) {
                 throw new IllegalStateException("config.properties not found in resources.");
@@ -34,6 +37,7 @@ public final class DBConnection {
     }
 
     public static DBConnection getInstance() {
+        // Double-check locking creates the DBConnection object only once.
         if (instance == null) {
             synchronized (DBConnection.class) {
                 if (instance == null) {
@@ -45,6 +49,7 @@ public final class DBConnection {
     }
 
     public Connection getConnection() throws SQLException {
+        // DriverManager opens a new JDBC connection using MySQL URL, username, and password.
         return DriverManager.getConnection(url, user, password);
     }
 }

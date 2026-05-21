@@ -2,11 +2,17 @@ package com.t20simulator.model;
 
 import java.time.LocalDate;
 
+/**
+ * Represents one row of MATCH_TABLE.
+ * Stores teams, venue, result, date, match type, and status.
+ */
 public class Match {
+    // Primary key and foreign-key IDs used by DAO classes.
     private int matchId;
     private int team1Id;
     private int team2Id;
     private int venueId;
+    // Integer wrapper allows null, which represents a tied match.
     private Integer winnerTeamId;
     private LocalDate matchDate;
     private String matchType;

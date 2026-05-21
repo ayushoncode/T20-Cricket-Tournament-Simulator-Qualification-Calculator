@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * Estimates whether a team can still finish inside a target rank.
+ * This is a simple qualification predictor based on points and remaining matches.
  */
 public class ScenarioPredictorService {
     private final LeaderboardService leaderboardService = new LeaderboardService();
@@ -24,15 +25,18 @@ public class ScenarioPredictorService {
     private final TeamDAO teamDAO = new TeamDAO();
 
     public Scenario evaluateQualification(int teamId, int targetRank) throws SQLException {
+        // Load current points-table entry and team details.
         pointsTableDAO.createEntryIfAbsent(teamId);
         PointsTable teamEntry = pointsTableDAO.getByTeamId(teamId)
                 .orElseThrow(() -> new SQLException("Points entry not found for team " + teamId));
         Team team = teamDAO.getById(teamId)
                 .orElseThrow(() -> new SQLException("Team not found for id " + teamId));
 
+        // Maximum points assumes the team wins all remaining scheduled matches.
         int remainingMatches = matchDAO.countRemainingMatchesForTeam(teamId);
         int maximumReachablePoints = teamEntry.getPoints() + (remainingMatches * 2);
 
+        // Current leaderboard gives the cutoff points for target rank, normally rank 4.
         List<PointsTable> leaderboard = leaderboardService.getLeaderboard();
         leaderboard.sort(Comparator.comparingInt(PointsTable::getPoints).reversed()
                 .thenComparing(Comparator.comparingDouble(PointsTable::getNrr).reversed()));
@@ -46,12 +50,14 @@ public class ScenarioPredictorService {
         boolean qualifiesOnPoints = maximumReachablePoints >= cutoffPoints;
         int pointsGap = Math.max(0, cutoffPoints - teamEntry.getPoints());
         int requiredWins = (int) Math.ceil(pointsGap / 2.0);
+        // These are suggested cushions, not exact cricket simulations.
         int requiredRuns = qualifiesOnPoints ? 0 : pointsGap * 15;
         int requiredBalls = qualifiesOnPoints ? 0 : pointsGap * 6;
         double projectedNrr = qualifiesOnPoints
                 ? Math.max(teamEntry.getNrr(), cutoffPoints == 0 ? teamEntry.getNrr() : teamEntry.getNrr() + 0.25)
                 : teamEntry.getNrr() + (requiredWins * 0.15);
 
+        // Store prediction in a Scenario model, then persist it to SCENARIO table.
         Scenario scenario = new Scenario();
         scenario.setTeamId(teamId);
         scenario.setTargetRank(targetRank);
@@ -65,6 +71,7 @@ public class ScenarioPredictorService {
     }
 
     public String buildScenarioSummary(Scenario scenario) throws SQLException {
+        // Convert prediction numbers into a readable message for Swing dialog and label.
         Team team = teamDAO.getById(scenario.getTeamId())
                 .orElseThrow(() -> new SQLException("Team not found for scenario summary."));
         if (scenario.getRequiredRuns() == 0 && scenario.getRequiredBalls() == 0) {

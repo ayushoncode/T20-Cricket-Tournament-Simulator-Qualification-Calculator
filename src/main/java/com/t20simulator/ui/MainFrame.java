@@ -13,8 +13,10 @@ import java.awt.Font;
 
 /**
  * Main Swing window that hosts all screens inside a custom top navigation bar.
+ * This is the entry point of the desktop application.
  */
 public class MainFrame extends JFrame {
+    // Names used by CardLayout to identify each screen.
     private static final String DASHBOARD = "dashboard";
     private static final String MATCH_ENTRY = "matchEntry";
     private static final String POINTS_TABLE = "pointsTable";
@@ -30,6 +32,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         super("T20 Cricket Tournament Simulator");
+        // Install common fonts, colors, and Swing defaults before creating components.
         UITheme.installLookAndFeelDefaults();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1180, 760);
@@ -38,6 +41,7 @@ public class MainFrame extends JFrame {
         getContentPane().setBackground(UITheme.BACKGROUND);
         setLayout(new BorderLayout());
 
+        // Dashboard and match entry receive a callback so they can refresh every screen after data changes.
         dashboardPanel = new DashboardPanel(this::refreshAllPanels);
         matchEntryPanel = new MatchEntryPanel(this::refreshAllPanels);
         pointsTablePanel = new PointsTablePanel();
@@ -64,6 +68,7 @@ public class MainFrame extends JFrame {
         navBar.add(appTitle, BorderLayout.WEST);
         navBar.add(tabPanel, BorderLayout.EAST);
 
+        // CardLayout keeps all screens loaded and displays only the selected one.
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(UITheme.BACKGROUND);
@@ -71,6 +76,7 @@ public class MainFrame extends JFrame {
         contentPanel.add(matchEntryPanel, MATCH_ENTRY);
         contentPanel.add(pointsTablePanel, POINTS_TABLE);
 
+        // Each navigation button switches the visible card and refreshes that screen.
         dashboardButton.addActionListener(event -> showTab(DASHBOARD));
         matchEntryButton.addActionListener(event -> showTab(MATCH_ENTRY));
         pointsTableButton.addActionListener(event -> showTab(POINTS_TABLE));
@@ -81,6 +87,7 @@ public class MainFrame extends JFrame {
     }
 
     private void refreshAllPanels() {
+        // Called after team, venue, or match changes so all tabs show the latest database values.
         dashboardPanel.refreshData();
         matchEntryPanel.refreshData();
         pointsTablePanel.refreshData();
@@ -88,6 +95,7 @@ public class MainFrame extends JFrame {
 
     private void showTab(String tabName) {
         cardLayout.show(contentPanel, tabName);
+        // Update active button styling so the user can see the selected screen.
         UITheme.styleTabButton(dashboardButton, DASHBOARD.equals(tabName));
         UITheme.styleTabButton(matchEntryButton, MATCH_ENTRY.equals(tabName));
         UITheme.styleTabButton(pointsTableButton, POINTS_TABLE.equals(tabName));
@@ -102,6 +110,7 @@ public class MainFrame extends JFrame {
     }
 
     public static void main(String[] args) {
+        // Swing UI must start on the Event Dispatch Thread for thread-safe rendering.
         SwingUtilities.invokeLater(() -> {
             MainFrame frame = new MainFrame();
             frame.setVisible(true);

@@ -13,9 +13,11 @@ import java.util.Optional;
 
 /**
  * Reads and updates the leaderboard table without embedding business rules.
+ * Business rules are in services; this DAO only executes POINTS_TABLE SQL.
  */
 public class PointsTableDAO {
     public void createEntryIfAbsent(int teamId) throws SQLException {
+        // Creates a zero-value points row for a team only if it does not already exist.
         String sql = "INSERT INTO POINTS_TABLE (team_id, played, won, lost, tied, nrr, points) "
                 + "SELECT ?, 0, 0, 0, 0, 0.0, 0 WHERE NOT EXISTS "
                 + "(SELECT 1 FROM POINTS_TABLE WHERE team_id = ?)";
@@ -28,12 +30,14 @@ public class PointsTableDAO {
     }
 
     public Optional<PointsTable> getByTeamId(int teamId) throws SQLException {
+        // Fetch current stats for one team before updating points or NRR.
         String sql = "SELECT entry_id, team_id, played, won, lost, tied, nrr, points FROM POINTS_TABLE WHERE team_id = ?";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, teamId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
+                    // Manually map columns because PointsTable has several calculated fields.
                     PointsTable pointsTable = new PointsTable();
                     pointsTable.setEntryId(resultSet.getInt("entry_id"));
                     pointsTable.setTeamId(resultSet.getInt("team_id"));
@@ -51,6 +55,7 @@ public class PointsTableDAO {
     }
 
     public void update(PointsTable pointsTable) throws SQLException {
+        // Writes changed played/won/lost/tied/NRR/points values back to database.
         String sql = "UPDATE POINTS_TABLE SET played = ?, won = ?, lost = ?, tied = ?, nrr = ?, points = ? WHERE team_id = ?";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -66,6 +71,7 @@ public class PointsTableDAO {
     }
 
     public List<PointsTable> getLeaderboard() throws SQLException {
+        // JOIN adds team name to points-table stats and ORDER BY creates the ranking order.
         String sql = "SELECT pt.entry_id, pt.team_id, t.team_name, pt.played, pt.won, pt.lost, pt.tied, pt.nrr, pt.points "
                 + "FROM POINTS_TABLE pt JOIN TEAM t ON pt.team_id = t.team_id "
                 + "ORDER BY pt.points DESC, pt.nrr DESC, t.team_name ASC";

@@ -7,11 +7,13 @@ import java.sql.SQLException;
 
 /**
  * Applies win-loss-tie rules and updates points table rows.
+ * Cricket rule used here: win = 2 points, tie = 1 point each, loss = 0.
  */
 public class PointsCalculatorService {
     private final PointsTableDAO pointsTableDAO = new PointsTableDAO();
 
     public void updatePointsForMatch(int team1Id, int team2Id, Integer winnerTeamId) throws SQLException {
+        // Ensure both teams have a row in POINTS_TABLE before updating stats.
         pointsTableDAO.createEntryIfAbsent(team1Id);
         pointsTableDAO.createEntryIfAbsent(team2Id);
 
@@ -20,19 +22,23 @@ public class PointsCalculatorService {
         PointsTable team2Entry = pointsTableDAO.getByTeamId(team2Id)
                 .orElseThrow(() -> new SQLException("Points table entry missing for team " + team2Id));
 
+        // Both teams have now played one more match.
         team1Entry.setPlayed(team1Entry.getPlayed() + 1);
         team2Entry.setPlayed(team2Entry.getPlayed() + 1);
 
         if (winnerTeamId == null) {
+            // Tie: both teams get one point.
             team1Entry.setTied(team1Entry.getTied() + 1);
             team2Entry.setTied(team2Entry.getTied() + 1);
             team1Entry.setPoints(team1Entry.getPoints() + 1);
             team2Entry.setPoints(team2Entry.getPoints() + 1);
         } else if (winnerTeamId == team1Id) {
+            // Team 1 wins: team1 gets 2 points, team2 gets one loss.
             team1Entry.setWon(team1Entry.getWon() + 1);
             team2Entry.setLost(team2Entry.getLost() + 1);
             team1Entry.setPoints(team1Entry.getPoints() + 2);
         } else if (winnerTeamId == team2Id) {
+            // Team 2 wins: team2 gets 2 points, team1 gets one loss.
             team2Entry.setWon(team2Entry.getWon() + 1);
             team1Entry.setLost(team1Entry.getLost() + 1);
             team2Entry.setPoints(team2Entry.getPoints() + 2);
@@ -40,6 +46,7 @@ public class PointsCalculatorService {
             throw new SQLException("Winner team id does not belong to the match.");
         }
 
+        // Save calculated stats back to POINTS_TABLE.
         pointsTableDAO.update(team1Entry);
         pointsTableDAO.update(team2Entry);
     }

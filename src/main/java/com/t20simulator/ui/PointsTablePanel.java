@@ -29,16 +29,20 @@ import java.util.List;
 
 /**
  * Points table tab that displays the leaderboard and checks qualification scenarios.
+ * It is used after matches are entered to inspect rankings and top-four chances.
  */
 public class PointsTablePanel extends JPanel {
+    // Table model defines columns shown in the leaderboard.
     private final DefaultTableModel tableModel = new DefaultTableModel(
             new Object[]{"Rank", "Team Name", "Played", "Won", "Lost", "Tied", "NRR", "Points"}, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
+            // User should not edit calculated leaderboard values directly.
             return false;
         }
     };
 
+    // JTable displays the points table; combo box selects team for prediction.
     private final JTable pointsTable = new JTable(tableModel);
     private final JComboBox<Team> teamComboBox = new JComboBox<>();
     private final JLabel resultLabel = new JLabel("Choose a team and predict qualification.");
@@ -60,10 +64,12 @@ public class PointsTablePanel extends JPanel {
         refreshButton.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(UITheme.BORDER, 1),
                 BorderFactory.createEmptyBorder(9, 18, 9, 18)));
+        // Refresh reloads leaderboard and team dropdown from database.
         refreshButton.addActionListener(event -> refreshData());
 
         JButton checkQualificationButton = new JButton("Predict");
         UITheme.styleButton(checkQualificationButton, UITheme.SUCCESS, new java.awt.Color(0x009E7D), UITheme.TEXT_PRIMARY);
+        // Predict checks whether selected team can still reach rank 4.
         checkQualificationButton.addActionListener(event -> checkQualification());
 
         styleInput(teamComboBox);
@@ -110,6 +116,7 @@ public class PointsTablePanel extends JPanel {
     }
 
     public void refreshData() {
+        // Both table and dropdown depend on database values, so refresh both together.
         loadLeaderboard();
         loadTeams();
     }
@@ -117,6 +124,7 @@ public class PointsTablePanel extends JPanel {
     private void loadLeaderboard() {
         tableModel.setRowCount(0);
         try {
+            // LeaderboardService sorts teams by points, then NRR, then name.
             List<PointsTable> leaderboard = leaderboardService.getLeaderboard();
             for (PointsTable entry : leaderboard) {
                 tableModel.addRow(new Object[]{
@@ -137,6 +145,7 @@ public class PointsTablePanel extends JPanel {
 
     private void loadTeams() {
         try {
+            // Team list is needed for the qualification predictor combo box.
             List<Team> teams = teamService.getAllTeams();
             teamComboBox.removeAllItems();
             for (Team team : teams) {
@@ -148,6 +157,7 @@ public class PointsTablePanel extends JPanel {
     }
 
     private void checkQualification() {
+        // No prediction can run until a team is selected.
         Team selectedTeam = (Team) teamComboBox.getSelectedItem();
         if (selectedTeam == null) {
             UITheme.showStyledMessage(this, "Input Required", "Please select a team first.", JOptionPane.WARNING_MESSAGE);
@@ -155,6 +165,7 @@ public class PointsTablePanel extends JPanel {
         }
 
         try {
+            // Target rank 4 means top-four qualification.
             Scenario scenario = scenarioPredictorService.evaluateQualification(selectedTeam.getTeamId(), 4);
             String result = scenarioPredictorService.buildScenarioSummary(scenario);
             resultLabel.setForeground(UITheme.SUCCESS);
@@ -172,6 +183,7 @@ public class PointsTablePanel extends JPanel {
     }
 
     private void styleTable() {
+        // Centralized table styling for readable rows and a clear header.
         pointsTable.setBackground(UITheme.CARD);
         pointsTable.setForeground(UITheme.TEXT_PRIMARY);
         pointsTable.setGridColor(UITheme.BORDER);
@@ -190,6 +202,7 @@ public class PointsTablePanel extends JPanel {
         header.setBorder(BorderFactory.createEmptyBorder());
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 42));
 
+        // Custom renderer centers every cell and alternates row background colors.
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,

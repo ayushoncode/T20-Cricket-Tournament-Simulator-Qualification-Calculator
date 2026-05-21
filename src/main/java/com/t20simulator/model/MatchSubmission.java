@@ -4,14 +4,17 @@ import java.time.LocalDate;
 
 /**
  * Carries all input values collected from the Swing match entry form.
+ * It is not a database table directly; it is a helper object between UI and MatchService.
  */
 public class MatchSubmission {
+    // Match-level values selected from combo boxes.
     private final int team1Id;
     private final int team2Id;
     private final int venueId;
     private final Integer winnerTeamId;
     private final LocalDate matchDate;
     private final String matchType;
+    // Scorecard values typed into the form.
     private final int team1Runs;
     private final int team1Wickets;
     private final double team1Overs;

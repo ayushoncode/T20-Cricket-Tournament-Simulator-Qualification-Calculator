@@ -12,9 +12,11 @@ import java.util.List;
 
 /**
  * Handles persistence and retrieval of innings rows used by NRR calculations.
+ * Each match creates two INNINGS rows: one for each batting team.
  */
 public class InningsDAO {
     public void insert(Innings innings) throws SQLException {
+        // Store one innings scorecard row for later NRR calculation.
         String sql = "INSERT INTO INNINGS (match_id, batting_team_id, bowling_team_id, runs_scored, wickets_lost, overs_played, all_out) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = DBConnection.getInstance().getConnection();
@@ -31,6 +33,7 @@ public class InningsDAO {
     }
 
     public List<Innings> getByMatch(int matchId) throws SQLException {
+        // Fetch both innings for one match.
         String sql = "SELECT innings_id, match_id, batting_team_id, bowling_team_id, runs_scored, wickets_lost, overs_played, all_out "
                 + "FROM INNINGS WHERE match_id = ? ORDER BY innings_id";
         List<Innings> inningsList = new ArrayList<>();
@@ -56,18 +59,21 @@ public class InningsDAO {
     }
 
     public List<Innings> getByBattingTeam(int teamId) throws SQLException {
+        // NRR needs all innings where this team scored runs.
         String sql = "SELECT innings_id, match_id, batting_team_id, bowling_team_id, runs_scored, wickets_lost, overs_played, all_out "
                 + "FROM INNINGS WHERE batting_team_id = ? ORDER BY innings_id";
         return getByTeamQuery(sql, teamId);
     }
 
     public List<Innings> getByBowlingTeam(int teamId) throws SQLException {
+        // NRR also needs all innings where this team conceded runs.
         String sql = "SELECT innings_id, match_id, batting_team_id, bowling_team_id, runs_scored, wickets_lost, overs_played, all_out "
                 + "FROM INNINGS WHERE bowling_team_id = ? ORDER BY innings_id";
         return getByTeamQuery(sql, teamId);
     }
 
     private List<Innings> getByTeamQuery(String sql, int teamId) throws SQLException {
+        // Common helper used by batting-team and bowling-team queries.
         List<Innings> inningsList = new ArrayList<>();
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

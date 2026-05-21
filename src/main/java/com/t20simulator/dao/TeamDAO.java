@@ -13,9 +13,11 @@ import java.util.Optional;
 
 /**
  * Provides CRUD-oriented access to team data.
+ * DAO means Data Access Object: this class contains SQL related to TEAM table only.
  */
 public class TeamDAO {
     public void insert(Team team) throws SQLException {
+        // PreparedStatement prevents SQL injection and safely fills ? placeholders.
         String sql = "INSERT INTO TEAM (team_name, group_name, captain, home_city) VALUES (?, ?, ?, ?)";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -28,11 +30,13 @@ public class TeamDAO {
     }
 
     public List<Team> getAll() throws SQLException {
+        // Used by combo boxes to show teams alphabetically.
         String sql = "SELECT team_id, team_name, group_name, captain, home_city FROM TEAM ORDER BY team_name";
         List<Team> teams = new ArrayList<>();
         try (Connection connection = DBConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
+            // ResultSet is read row by row and converted into Team objects.
             while (resultSet.next()) {
                 teams.add(mapRow(resultSet));
             }
@@ -41,6 +45,7 @@ public class TeamDAO {
     }
 
     public Optional<Team> getById(int teamId) throws SQLException {
+        // Optional is used because the id may not exist in the database.
         String sql = "SELECT team_id, team_name, group_name, captain, home_city FROM TEAM WHERE team_id = ?";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -55,6 +60,7 @@ public class TeamDAO {
     }
 
     public int countTeams() throws SQLException {
+        // Dashboard uses this count for the Total Teams stat card.
         String sql = "SELECT COUNT(*) FROM TEAM";
         try (Connection connection = DBConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -65,6 +71,7 @@ public class TeamDAO {
     }
 
     private Team mapRow(ResultSet resultSet) throws SQLException {
+        // Converts one database row into one Java model object.
         return new Team(
                 resultSet.getInt("team_id"),
                 resultSet.getString("team_name"),

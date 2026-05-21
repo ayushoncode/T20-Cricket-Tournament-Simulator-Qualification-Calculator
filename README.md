@@ -2,6 +2,21 @@
 
 A Java-based system to simulate T20 tournaments, manage match results, calculate points tables, Net Run Rate (NRR), and predict qualification scenarios.
 
+## Project Structure
+
+```text
+src/main/java/com/t20simulator/
+├── dao
+├── db
+├── model
+├── service
+└── ui
+
+src/main/resources/
+├── config.properties
+└── db/schema.sql
+```
+
 ---
 
 ## 🧠 System Architecture
@@ -10,11 +25,12 @@ A Java-based system to simulate T20 tournaments, manage match results, calculate
 
 This project follows a layered architecture:
 
-### 🔹 Frontend (JavaFX - GUI Layer)
+### 🔹 Frontend (Java Swing - GUI Layer)
 
-* Tournament Dashboard → Overview & controls
-* Points Table Screen → Live leaderboard
-* Match Entry Screen → Record match results
+* `MainFrame` → Single `JFrame` with `JTabbedPane`
+* `DashboardPanel` → Stats + add team/venue dialogs
+* `MatchEntryPanel` → Match result form
+* `PointsTablePanel` → Leaderboard + qualification predictor
 
 ### 🔹 Backend (Java - Business Logic)
 
@@ -34,7 +50,9 @@ This project follows a layered architecture:
 ### 🔹 Database (MySQL)
 
 * teams
-* matches
+* venues
+* match_table
+* innings
 * points_table
 * scenarios
 
@@ -42,7 +60,7 @@ This project follows a layered architecture:
 
 ## 📊 ER Diagram
 
-![ER Diagram](er_diagram.png)
+![ER Diagram](chen_er_diagram.svg)
 
 ---
 
@@ -65,25 +83,47 @@ This project follows a layered architecture:
 
 ## 🛠️ Tech Stack
 
-* **Frontend:** JavaFX
+* **Frontend:** Java Swing (`javax.swing`, `java.awt`)
 * **Backend:** Java
 * **Database:** MySQL
 * **Connectivity:** JDBC
 
 ---
 
+## ⚙️ Setup
+
+1. Create the database objects from [schema.sql](/Users/ayush/T20-Cricket-Tournament-Simulator-Qualification-Calculator/src/main/resources/db/schema.sql).
+2. Update [config.properties](/Users/ayush/T20-Cricket-Tournament-Simulator-Qualification-Calculator/src/main/resources/config.properties) with your MySQL username and password.
+3. Make sure Java 17+ is installed.
+4. Compile and run:
+
+```bash
+javac -d out $(find src/main/java -name '*.java')
+java -cp out com.t20simulator.ui.MainFrame
+```
+
+The application opens with:
+
+* Dashboard tab
+* Match Entry tab
+* Points Table tab
+
+---
+
 ## 📌 Project Status
 
-🚧 Currently in initial phase
+✅ Core project scaffold completed
 
-* README + Design completed
-* Frontend & Backend implementation coming next
+* Swing tabs and dialogs added
+* JDBC DAO + service layers added
+* SQL schema with `MATCH_TABLE` + config file added
+* Leaderboard, NRR, and scenario flow wired
 
 ---
 
 ## 💡 Future Enhancements
 
-* Full GUI implementation (JavaFX)
+* Schedule remaining matches from the UI
 * REST API integration
 * Advanced analytics & predictions
 * Deployment

@@ -1,0 +1,239 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1300" width="1800" height="1300">
+  <defs>
+    <style>
+      .entity { fill: #e7b36d; stroke: #704214; stroke-width: 2.5; }
+      .relationship { fill: #f1a7c3; stroke: #8d3a61; stroke-width: 2.5; }
+      .attribute { fill: #bfe3a2; stroke: #3e6d2a; stroke-width: 2.2; }
+      .line { stroke: #333333; stroke-width: 2.2; fill: none; }
+      .entity-text { font: 700 26px "Georgia", "Times New Roman", serif; fill: #2b1a0f; }
+      .shape-text { font: 600 20px "Georgia", "Times New Roman", serif; fill: #1f1f1f; }
+      .attr-text { font: 18px "Georgia", "Times New Roman", serif; fill: #163313; }
+      .cardinality { font: 700 22px "Georgia", "Times New Roman", serif; fill: #222222; }
+      .pk { text-decoration: underline; }
+    </style>
+  </defs>
+
+  <rect x="790" y="80" width="220" height="84" rx="4" class="entity"/>
+  <text x="900" y="132" text-anchor="middle" class="entity-text">TEAM</text>
+
+  <rect x="1410" y="110" width="240" height="84" rx="4" class="entity"/>
+  <text x="1530" y="162" text-anchor="middle" class="entity-text">VENUE</text>
+
+  <rect x="1400" y="520" width="240" height="84" rx="4" class="entity"/>
+  <text x="1520" y="572" text-anchor="middle" class="entity-text">MATCH</text>
+
+  <rect x="150" y="520" width="300" height="84" rx="4" class="entity"/>
+  <text x="300" y="572" text-anchor="middle" class="entity-text">POINTS_TABLE</text>
+
+  <rect x="760" y="1010" width="280" height="84" rx="4" class="entity"/>
+  <text x="900" y="1062" text-anchor="middle" class="entity-text">INNINGS</text>
+
+  <rect x="170" y="980" width="260" height="84" rx="4" class="entity"/>
+  <text x="300" y="1032" text-anchor="middle" class="entity-text">SCENARIO</text>
+
+  <ellipse cx="620" cy="55" rx="120" ry="34" class="attribute"/>
+  <text x="620" y="61" text-anchor="middle" class="attr-text pk">team_id (PK)</text>
+  <line x1="718" y1="72" x2="790" y2="92" class="line"/>
+
+  <ellipse cx="620" cy="145" rx="126" ry="34" class="attribute"/>
+  <text x="620" y="151" text-anchor="middle" class="attr-text">team_name</text>
+  <line x1="746" y1="145" x2="790" y2="132" class="line"/>
+
+  <ellipse cx="900" cy="18" rx="126" ry="34" class="attribute"/>
+  <text x="900" y="24" text-anchor="middle" class="attr-text">group_name</text>
+  <line x1="900" y1="52" x2="900" y2="80" class="line"/>
+
+  <ellipse cx="1180" cy="55" rx="108" ry="34" class="attribute"/>
+  <text x="1180" y="61" text-anchor="middle" class="attr-text">captain</text>
+  <line x1="1082" y1="72" x2="1010" y2="92" class="line"/>
+
+  <ellipse cx="1180" cy="145" rx="118" ry="34" class="attribute"/>
+  <text x="1180" y="151" text-anchor="middle" class="attr-text">home_city</text>
+  <line x1="1062" y1="145" x2="1010" y2="132" class="line"/>
+
+  <ellipse cx="1325" cy="40" rx="122" ry="34" class="attribute"/>
+  <text x="1325" y="46" text-anchor="middle" class="attr-text pk">venue_id (PK)</text>
+  <line x1="1415" y1="115" x2="1372" y2="74" class="line"/>
+
+  <ellipse cx="1530" cy="28" rx="90" ry="34" class="attribute"/>
+  <text x="1530" y="34" text-anchor="middle" class="attr-text">name</text>
+  <line x1="1530" y1="62" x2="1530" y2="110" class="line"/>
+
+  <ellipse cx="1740" cy="70" rx="82" ry="34" class="attribute"/>
+  <text x="1740" y="76" text-anchor="middle" class="attr-text">city</text>
+  <line x1="1664" y1="91" x2="1650" y2="115" class="line"/>
+
+  <ellipse cx="1720" cy="165" rx="102" ry="34" class="attribute"/>
+  <text x="1720" y="171" text-anchor="middle" class="attr-text">capacity</text>
+  <line x1="1618" y1="165" x2="1650" y2="152" class="line"/>
+
+  <ellipse cx="1285" cy="450" rx="116" ry="34" class="attribute"/>
+  <text x="1285" y="456" text-anchor="middle" class="attr-text pk">match_id (PK)</text>
+  <line x1="1388" y1="520" x2="1335" y2="482" class="line"/>
+
+  <ellipse cx="1520" cy="440" rx="118" ry="34" class="attribute"/>
+  <text x="1520" y="446" text-anchor="middle" class="attr-text">match_date</text>
+  <line x1="1520" y1="474" x2="1520" y2="520" class="line"/>
+
+  <ellipse cx="1740" cy="460" rx="116" ry="34" class="attribute"/>
+  <text x="1740" y="466" text-anchor="middle" class="attr-text">match_type</text>
+  <line x1="1652" y1="488" x2="1636" y2="520" class="line"/>
+
+  <ellipse cx="1280" cy="680" rx="90" ry="34" class="attribute"/>
+  <text x="1280" y="686" text-anchor="middle" class="attr-text">status</text>
+  <line x1="1388" y1="604" x2="1335" y2="660" class="line"/>
+
+  <ellipse cx="1715" cy="680" rx="146" ry="34" class="attribute"/>
+  <text x="1715" y="686" text-anchor="middle" class="attr-text">winner_team_id</text>
+  <line x1="1635" y1="604" x2="1670" y2="648" class="line"/>
+
+  <ellipse cx="70" cy="450" rx="108" ry="34" class="attribute"/>
+  <text x="70" y="456" text-anchor="middle" class="attr-text pk">entry_id (PK)</text>
+  <line x1="150" y1="520" x2="112" y2="482" class="line"/>
+
+  <ellipse cx="70" cy="540" rx="90" ry="34" class="attribute"/>
+  <text x="70" y="546" text-anchor="middle" class="attr-text">team_id</text>
+  <line x1="150" y1="560" x2="160" y2="560" class="line"/>
+
+  <ellipse cx="70" cy="630" rx="88" ry="34" class="attribute"/>
+  <text x="70" y="636" text-anchor="middle" class="attr-text">played</text>
+  <line x1="150" y1="585" x2="132" y2="612" class="line"/>
+
+  <ellipse cx="300" cy="430" rx="74" ry="34" class="attribute"/>
+  <text x="300" y="436" text-anchor="middle" class="attr-text">won</text>
+  <line x1="300" y1="464" x2="300" y2="520" class="line"/>
+
+  <ellipse cx="500" cy="450" rx="82" ry="34" class="attribute"/>
+  <text x="500" y="456" text-anchor="middle" class="attr-text">lost</text>
+  <line x1="450" y1="520" x2="460" y2="482" class="line"/>
+
+  <ellipse cx="540" cy="540" rx="82" ry="34" class="attribute"/>
+  <text x="540" y="546" text-anchor="middle" class="attr-text">tied</text>
+  <line x1="450" y1="560" x2="458" y2="560" class="line"/>
+
+  <ellipse cx="520" cy="630" rx="82" ry="34" class="attribute"/>
+  <text x="520" y="636" text-anchor="middle" class="attr-text">nrr</text>
+  <line x1="450" y1="586" x2="470" y2="612" class="line"/>
+
+  <ellipse cx="300" cy="700" rx="92" ry="34" class="attribute"/>
+  <text x="300" y="706" text-anchor="middle" class="attr-text">points</text>
+  <line x1="300" y1="604" x2="300" y2="666" class="line"/>
+
+  <ellipse cx="620" cy="940" rx="118" ry="34" class="attribute"/>
+  <text x="620" y="946" text-anchor="middle" class="attr-text pk">innings_id (PK)</text>
+  <line x1="760" y1="1010" x2="698" y2="968" class="line"/>
+
+  <ellipse cx="760" cy="1190" rx="96" ry="34" class="attribute"/>
+  <text x="760" y="1196" text-anchor="middle" class="attr-text">match_id</text>
+  <line x1="790" y1="1094" x2="780" y2="1156" class="line"/>
+
+  <ellipse cx="980" cy="1190" rx="132" ry="34" class="attribute"/>
+  <text x="980" y="1196" text-anchor="middle" class="attr-text">batting_team_id</text>
+  <line x1="940" y1="1094" x2="960" y2="1156" class="line"/>
+
+  <ellipse cx="1190" cy="1110" rx="138" ry="34" class="attribute"/>
+  <text x="1190" y="1116" text-anchor="middle" class="attr-text">bowling_team_id</text>
+  <line x1="1040" y1="1052" x2="1060" y2="1052" class="line"/>
+
+  <ellipse cx="1190" cy="950" rx="120" ry="34" class="attribute"/>
+  <text x="1190" y="956" text-anchor="middle" class="attr-text">runs_scored</text>
+  <line x1="1040" y1="1028" x2="1104" y2="976" class="line"/>
+
+  <ellipse cx="900" cy="1260" rx="122" ry="34" class="attribute"/>
+  <text x="900" y="1266" text-anchor="middle" class="attr-text">wickets_lost</text>
+  <line x1="900" y1="1094" x2="900" y2="1226" class="line"/>
+
+  <ellipse cx="620" cy="1110" rx="118" ry="34" class="attribute"/>
+  <text x="620" y="1116" text-anchor="middle" class="attr-text">overs_played</text>
+  <line x1="760" y1="1052" x2="738" y2="1052" class="line"/>
+
+  <ellipse cx="520" cy="950" rx="86" ry="34" class="attribute"/>
+  <text x="520" y="956" text-anchor="middle" class="attr-text">all_out</text>
+  <line x1="760" y1="1028" x2="594" y2="970" class="line"/>
+
+  <ellipse cx="40" cy="910" rx="128" ry="34" class="attribute"/>
+  <text x="40" y="916" text-anchor="middle" class="attr-text pk">scenario_id (PK)</text>
+  <line x1="170" y1="990" x2="128" y2="942" class="line"/>
+
+  <ellipse cx="40" cy="1000" rx="92" ry="34" class="attribute"/>
+  <text x="40" y="1006" text-anchor="middle" class="attr-text">team_id</text>
+  <line x1="170" y1="1022" x2="132" y2="1020" class="line"/>
+
+  <ellipse cx="40" cy="1090" rx="110" ry="34" class="attribute"/>
+  <text x="40" y="1096" text-anchor="middle" class="attr-text">target_rank</text>
+  <line x1="170" y1="1040" x2="140" y2="1066" class="line"/>
+
+  <ellipse cx="300" cy="900" rx="122" ry="34" class="attribute"/>
+  <text x="300" y="906" text-anchor="middle" class="attr-text">required_runs</text>
+  <line x1="300" y1="934" x2="300" y2="980" class="line"/>
+
+  <ellipse cx="500" cy="940" rx="122" ry="34" class="attribute"/>
+  <text x="500" y="946" text-anchor="middle" class="attr-text">required_balls</text>
+  <line x1="430" y1="992" x2="410" y2="968" class="line"/>
+
+  <ellipse cx="520" cy="1040" rx="126" ry="34" class="attribute"/>
+  <text x="520" y="1046" text-anchor="middle" class="attr-text">projected_nrr</text>
+  <line x1="430" y1="1022" x2="394" y2="1030" class="line"/>
+
+  <ellipse cx="300" cy="1140" rx="102" ry="34" class="attribute"/>
+  <text x="300" y="1146" text-anchor="middle" class="attr-text">created_at</text>
+  <line x1="300" y1="1064" x2="300" y2="1106" class="line"/>
+
+  <polygon points="1120,250 1220,320 1120,390 1020,320" class="relationship"/>
+  <text x="1120" y="314" text-anchor="middle" class="shape-text">plays as</text>
+  <text x="1120" y="340" text-anchor="middle" class="shape-text">team1</text>
+  <line x1="1010" y1="144" x2="1060" y2="250" class="line"/>
+  <line x1="1220" y1="320" x2="1400" y2="540" class="line"/>
+  <text x="1042" y="210" class="cardinality">M</text>
+  <text x="1340" y="500" class="cardinality">1</text>
+
+  <polygon points="1320,320 1420,390 1320,460 1220,390" class="relationship"/>
+  <text x="1320" y="384" text-anchor="middle" class="shape-text">plays as</text>
+  <text x="1320" y="410" text-anchor="middle" class="shape-text">team2</text>
+  <line x1="1010" y1="128" x2="1220" y2="360" class="line"/>
+  <line x1="1420" y1="390" x2="1480" y2="520" class="line"/>
+  <text x="1128" y="230" class="cardinality">M</text>
+  <text x="1448" y="480" class="cardinality">1</text>
+
+  <polygon points="1520,270 1620,340 1520,410 1420,340" class="relationship"/>
+  <text x="1520" y="347" text-anchor="middle" class="shape-text">hosts</text>
+  <line x1="1530" y1="194" x2="1530" y2="270" class="line"/>
+  <line x1="1520" y1="410" x2="1520" y2="520" class="line"/>
+  <text x="1544" y="246" class="cardinality">1</text>
+  <text x="1544" y="486" class="cardinality">N</text>
+
+  <polygon points="590,420 700,490 590,560 480,490" class="relationship"/>
+  <text x="590" y="484" text-anchor="middle" class="shape-text">has entry</text>
+  <line x1="790" y1="140" x2="650" y2="420" class="line"/>
+  <line x1="480" y1="490" x2="450" y2="542" class="line"/>
+  <text x="718" y="246" class="cardinality">1</text>
+  <text x="458" y="504" class="cardinality">1</text>
+
+  <polygon points="1220,800 1320,870 1220,940 1120,870" class="relationship"/>
+  <text x="1220" y="878" text-anchor="middle" class="shape-text">has</text>
+  <line x1="1460" y1="604" x2="1290" y2="800" class="line"/>
+  <line x1="1120" y1="870" x2="1040" y2="980" class="line"/>
+  <text x="1362" y="694" class="cardinality">1</text>
+  <text x="1070" y="936" class="cardinality">N</text>
+
+  <polygon points="760,720 860,790 760,860 660,790" class="relationship"/>
+  <text x="760" y="798" text-anchor="middle" class="shape-text">bats in</text>
+  <line x1="860" y1="164" x2="780" y2="720" class="line"/>
+  <line x1="800" y1="860" x2="860" y2="1010" class="line"/>
+  <text x="838" y="216" class="cardinality">M</text>
+  <text x="820" y="960" class="cardinality">N</text>
+
+  <polygon points="1040,720 1140,790 1040,860 940,790" class="relationship"/>
+  <text x="1040" y="798" text-anchor="middle" class="shape-text">bowls in</text>
+  <line x1="940" y1="164" x2="1020" y2="720" class="line"/>
+  <line x1="1000" y1="860" x2="940" y2="1010" class="line"/>
+  <text x="958" y="216" class="cardinality">M</text>
+  <text x="972" y="960" class="cardinality">N</text>
+
+  <polygon points="570,980 670,1050 570,1120 470,1050" class="relationship"/>
+  <text x="570" y="1058" text-anchor="middle" class="shape-text">simulates</text>
+  <line x1="760" y1="1052" x2="670" y2="1050" class="line"/>
+  <line x1="470" y1="1050" x2="430" y2="1022" class="line"/>
+  <text x="688" y="1038" class="cardinality">N</text>
+  <text x="438" y="1070" class="cardinality">N</text>
+</svg>

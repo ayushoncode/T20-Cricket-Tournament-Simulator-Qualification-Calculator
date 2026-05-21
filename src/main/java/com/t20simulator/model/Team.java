@@ -1,0 +1,65 @@
+package com.t20simulator.model;
+
+public class Team {
+    private int teamId;
+    private String teamName;
+    private String groupName;
+    private String captain;
+    private String homeCity;
+
+    public Team() {
+    }
+
+    public Team(int teamId, String teamName, String groupName, String captain, String homeCity) {
+        this.teamId = teamId;
+        this.teamName = teamName;
+        this.groupName = groupName;
+        this.captain = captain;
+        this.homeCity = homeCity;
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getCaptain() {
+        return captain;
+    }
+
+    public void setCaptain(String captain) {
+        this.captain = captain;
+    }
+
+    public String getHomeCity() {
+        return homeCity;
+    }
+
+    public void setHomeCity(String homeCity) {
+        this.homeCity = homeCity;
+    }
+
+    @Override
+    public String toString() {
+        return teamName;
+    }
+}
